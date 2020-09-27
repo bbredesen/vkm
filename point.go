@@ -59,12 +59,12 @@ func (p Pt2) Clone() Pt2 {
 
 // VecTo returns a vector directed from this point to the specified point q
 func (p Pt) VecTo(q Pt) Vec {
-	return [4]float32{q[0] - p[0], q[1] - p[1], q[2] - p[2], q[3] - p[3]}
+	return Vec{q[0] - p[0], q[1] - p[1], q[2] - p[2], q[3] - p[3]}
 }
 
 // VecFrom returns a vector directed to this point, from the specified point q
 func (p Pt) VecFrom(q Pt) Vec {
-	return [4]float32{p[0] - q[0], p[1] - q[1], p[2] - q[2], p[3] - q[3]}
+	return Vec{p[0] - q[0], p[1] - q[1], p[2] - q[2], p[3] - q[3]}
 }
 
 // Add returns the point where p is translated by v
