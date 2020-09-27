@@ -34,7 +34,7 @@ func LookAt(eye, focus Pt, up Vec) Mat {
 	vRight := up.Cross(vBack).Normalize()
 	vUp := vBack.Cross(vRight)
 
-	m := Mat{vRight, vUp, vBack, Vec(Origin())}
+	m := Mat{vRight, vUp, vBack, Vec(Origin())}.Transpose()
 	t := NewMatTranslate(eye.VecTo(focus))
 	return m.MultM(t)
 }
