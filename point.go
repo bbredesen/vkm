@@ -29,6 +29,16 @@ func Origin() Pt {
 	return Pt{0, 0, 0, 1}
 }
 
+// ZeroPt is a synonym for Origin()
+var ZeroPt = Origin
+
+func Origin2() Pt2 {
+	return Pt2{0, 0}
+}
+func Origin3() Pt3 {
+	return Pt3{0, 0, 0}
+}
+
 // AsPt onverts a slice of float32 to a Pt. If the slice has more than four elements, only the first four will be copied.
 func AsPt(s []float32) Pt {
 	rval := Origin()
@@ -64,7 +74,7 @@ func (p Pt) VecTo(q Pt) Vec {
 
 // VecFrom returns a vector directed to this point, from the specified point q
 func (p Pt) VecFrom(q Pt) Vec {
-	return Vec{p[0] - q[0], p[1] - q[1], p[2] - q[2], p[3] - q[3]}
+	return Vec{p[0] - q[0], p[1] - q[1], p[2] - q[2], 1}
 }
 
 // Add returns the point where p is translated by v
@@ -75,6 +85,11 @@ func (p Pt) Add(v Vec) Pt {
 // Homogenize converts a Pt3 into a Pt, with the w component fixed to 1.0
 func (p Pt3) Homogenize() Pt {
 	return Pt{p[0], p[1], p[2], 1.0}
+}
+
+// Homogenize converts a Pt2 into a Pt, with z set to zero and the w component fixed to 1.0
+func (p Pt2) Homogenize() Pt {
+	return Pt{p[0], p[1], 0, 1.0}
 }
 
 // Homogenize on a Pt divides all components by the w coordinate
@@ -98,3 +113,31 @@ func (p Pt) EqualTo(q Pt) bool {
 		dw < lamMin || dw > lamMax)
 
 }
+
+func (p Pt2) Add(v Vec2) Pt2 {
+	return Pt2{p[0] + v[0], p[1] + v[1]}
+}
+
+func (p Pt3) Add(v Vec3) Pt3 {
+	return Pt3{p[0] + v[0], p[1] + v[1], p[2] + v[2]}
+}
+
+func (p Pt2) VecTo(q Pt2) Vec2 {
+	return Vec2{q[0] - p[0], q[1] - p[1]}
+}
+
+// VecFrom returns a vector directed to this point, from the specified point q
+func (p Pt2) VecFrom(q Pt2) Vec2 {
+	return Vec2{p[0] - q[0], p[1] - q[1]}
+}
+
+func (p Pt3) VecTo(q Pt3) Vec3 {
+	return Vec3{q[0] - p[0], q[1] - p[1], q[2] - p[2]}
+}
+
+// VecFrom returns a vector directed to this point, from the specified point q
+func (p Pt3) VecFrom(q Pt3) Vec3 {
+	return Vec3{p[0] - q[0], p[1] - q[1], p[2] - q[2]}
+}
+
+func (p Pt) FlattenToXY() Pt2 { return Pt2{p[0], p[1]} }
