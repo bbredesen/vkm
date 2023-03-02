@@ -1,10 +1,18 @@
 package vkm
 
-import "github.com/chewxy/math32"
+import (
+	"unsafe"
+
+	"github.com/chewxy/math32"
+)
 
 // Mat is a column-major 4x4 matrix of float32s. Because it is fundamentally an array of arrays,
 // elements can be directly addressed via double brackets: m[col][row]
 type Mat [4]Vec
+
+func (m *Mat) AsBytes() []byte {
+	return (*[64]byte)(unsafe.Pointer(m))[:]
+}
 
 // MultV computes a matrix multiplication on the provided vector
 func (m Mat) MultV(v Vec) Vec {
