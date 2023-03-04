@@ -5,11 +5,11 @@ and targeting 3D graphics programing.
 
 VKM is specifically targeted at 3D graphics and is NOT inteded to be an
 all-purpose vector math or linear algebra package. It includes some variant types like `Pt2` and
-`Vec3` for convenience, but all matrix math functions rely on homogenous 3D
+`Vec3` for convenience, but the primary matrix math functions rely on homogenous 3D
 vectors and points.
 
 While this module can be used in any Go program wanting to work with 3D transformations, it was built to use with
-[go-vk](https://github.com/bbredesen/go-vk) (and [go-vk-samples](https://github.com/bbredesen/go-vk-samples)), a Go
+[go-vk](https://github.com/bbredesen/go-vk), a Go
 language binding for the [Vulkan](https://khronos.org/vulkan/) graphics API.
 
 ## Usage
@@ -17,16 +17,16 @@ language binding for the [Vulkan](https://khronos.org/vulkan/) graphics API.
 See the GoDoc for the full API.
 
 VKM defines three primary types: `Pt`, `Vec`, and `Matrix`. All three are stored
-in column-major order and are fundamentally arrays of `float32`. (Note: this explicitly means static arrays and not
+in column-major order and are fundamentally arrays of `[4]float32`. (Note: this explicitly means static arrays and not
 slices.) 
 
-We use `float32`, and not Go's default 65-bit floating point type, because Vulkan (generally) uses 32-bit
+We use `float32`, and not Go's default 64-bit floating point type, because Vulkan (generally) uses 32-bit
 floats on the GPU. As a consequence, and rather than constantly forcing float32 type casts, VKM uses the [chewxy/math32 package](https://github.com/chewxy/math32) for float32 operations and constants. 
 
 ## Examples
 
 ### Create a basic transformation
-You can generate a simpole tranformation with the `NewMat__` variants:
+You can generate a simple tranformation with the `NewMat__` variants:
 
 ```go
 import (
