@@ -13,10 +13,21 @@ import "github.com/chewxy/math32"
 func Perspective(fov, aspect, near, far float32) Mat {
 	f := 1 / math32.Tan(fov/2)
 	return Mat{
-		{f / aspect, 0, 0, 0},
-		{0, -f, 0, 0},
+		{-f / aspect, 0, 0, 0},
+		{0, f, 0, 0},
 		{0, 0, far / (near - far), -1},
 		{0, 0, far * near / (near - far), 0},
+	}
+}
+
+// GlTFPerspective is the perspective matrix mandated by the glTF specification.
+func GlTFPerspective(fov, aspect, near, far float32) Mat {
+	f := 1 / math32.Tan(fov/2)
+	return Mat{
+		{f / aspect, 0, 0, 0},
+		{0, f, 0, 0},
+		{0, 0, (near + far) / (near - far), -1},
+		{0, 0, (2 * far * near) / (near - far), 0},
 	}
 }
 
@@ -30,8 +41,8 @@ func Perspective(fov, aspect, near, far float32) Mat {
 func InvertedDepthPerspective(fov, aspect, near, far float32) Mat {
 	f := 1 / math32.Tan(fov/2)
 	return Mat{ // Clipping Z reversed!
-		{f / aspect, 0, 0, 0},
-		{0, -f, 0, 0},
+		{-f / aspect, 0, 0, 0},
+		{0, f, 0, 0},
 		{0, 0, near / (far - near), -1},
 		{0, 0, far * near / (far - near), 0},
 	}
@@ -49,6 +60,16 @@ func OrthoProjection(width, height, near, far float32) Mat {
 		{2 / width, 0, 0, 0},
 		{0, 2 / height, 0, 0},
 		{0, 0, 1 / (far - near), (far + near) / (far - near)},
+		{0, 0, 0, 1},
+	}
+}
+
+// GlTFOrthoProjection is the orthographic projection matrix mandated by the glTF specification.
+func GlTFOrthoProjection(xmag, ymag, znear, zfar float32) Mat {
+	return Mat{
+		{2 / xmag, 0, 0, 0},
+		{0, 2 / ymag, 0, 0},
+		{0, 0, 2 / (znear - zfar), (znear + zfar) / (znear - zfar)},
 		{0, 0, 0, 1},
 	}
 }
@@ -71,8 +92,10 @@ func Camera(eye Pt, look Vec, up Vec) Mat {
 	// x := Mat{{1, 0, 0, 0}, {0, -1, 0, 0}, {0, 0, -1, 0}, {0, 0, 0, 1}}.Inverse()
 
 	w := look.Invert().Normalize()
-	u := w.Cross(up).Normalize()
-	v := w.Cross(u)
+	// u := w.Cross(up).Normalize()
+	u := up.Cross(w).Normalize()
+	// v := w.Cross(u)
+	v := u.Cross(w)
 
 	t := NewMatTranslate(eye.VecFrom(Origin()))
 
