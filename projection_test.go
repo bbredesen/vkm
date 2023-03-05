@@ -7,15 +7,17 @@ import (
 func TestPerspective(t *testing.T) {
 	pMat := PerspectiveDeg(90.0, 1.0, 2.0, 10.0)
 
-	p0 := Origin()        // Should be clipped out, projected to negative Inf
-	p1 := NewPt(0, 0, 1)  // Should be clipped on Z
-	p2 := NewPt(0, 0, -2) // Should be projected to (0, 0, 0.0)
-	p3 := NewPt(5, 5, -5) // Should be projected to (1, 1, <1.0)
+	p0 := Origin()            // Should be clipped out, projected to negative Inf
+	p1 := NewPt(0, 0, 1)      // Should be clipped on Z
+	p2 := NewPt(0, 0, -2)     // Should be projected to (0, 0, 0.0)
+	p3 := NewPt(5, 5, -5)     // Should be projected to (1, 1, <1.0)
+	p4 := NewPt(-10, 10, -10) // Should be projected to (-1, 1, 1.0)
 
 	r0 := pMat.MultP(p0)
 	r1 := pMat.MultP(p1)
 	r2 := pMat.MultP(p2)
 	r3 := pMat.MultP(p3)
+	r4 := pMat.MultP(p4)
 
 	if !testClipped(r0) {
 		t.Errorf("Origin was not clipped! Result: %+v", r0)
@@ -28,6 +30,9 @@ func TestPerspective(t *testing.T) {
 	}
 	if testClipped(r3) {
 		t.Errorf("Point on back plane was clipped! Result: %+v", r3)
+	}
+	if testClipped(r4) {
+		t.Errorf("Point on corner boundary was clipped! Result %+v", r4)
 	}
 }
 

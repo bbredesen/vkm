@@ -5,7 +5,7 @@ import "github.com/chewxy/math32"
 // Perspective generates a perspective projection matrix for Vulkan. Note that in Vulkan, the standard z clipping space is in the range
 // [0..1], and x/y in the range [-1..1] (or rather -w to +w).
 //
-// aspect is the ratio of height divided by width
+// aspect is the ratio of width divided by height
 //
 // fov is the vertical field of view measured in radians
 //
@@ -13,21 +13,10 @@ import "github.com/chewxy/math32"
 func Perspective(fov, aspect, near, far float32) Mat {
 	f := 1 / math32.Tan(fov/2)
 	return Mat{
-		{-f / aspect, 0, 0, 0},
+		{f / aspect, 0, 0, 0},
 		{0, f, 0, 0},
 		{0, 0, far / (near - far), -1},
 		{0, 0, far * near / (near - far), 0},
-	}
-}
-
-// GlTFPerspective is the perspective matrix mandated by the glTF specification.
-func GlTFPerspective(fov, aspect, near, far float32) Mat {
-	f := 1 / math32.Tan(fov/2)
-	return Mat{
-		{f / aspect, 0, 0, 0},
-		{0, f, 0, 0},
-		{0, 0, (near + far) / (near - far), -1},
-		{0, 0, (2 * far * near) / (near - far), 0},
 	}
 }
 
@@ -41,7 +30,7 @@ func GlTFPerspective(fov, aspect, near, far float32) Mat {
 func InvertedDepthPerspective(fov, aspect, near, far float32) Mat {
 	f := 1 / math32.Tan(fov/2)
 	return Mat{ // Clipping Z reversed!
-		{-f / aspect, 0, 0, 0},
+		{f / aspect, 0, 0, 0},
 		{0, f, 0, 0},
 		{0, 0, near / (far - near), -1},
 		{0, 0, far * near / (far - near), 0},
@@ -64,18 +53,8 @@ func OrthoProjection(width, height, near, far float32) Mat {
 	}
 }
 
-// GlTFOrthoProjection is the orthographic projection matrix mandated by the glTF specification.
-func GlTFOrthoProjection(xmag, ymag, znear, zfar float32) Mat {
-	return Mat{
-		{2 / xmag, 0, 0, 0},
-		{0, 2 / ymag, 0, 0},
-		{0, 0, 2 / (znear - zfar), (znear + zfar) / (znear - zfar)},
-		{0, 0, 0, 1},
-	}
-}
-
 // LookAt creates a view matrix from the provided eye and focus points, and an
-// up vector. Note that this function does NOT generate a persepctive matrix. Note that LookAt (and all projection
+// up vector. This function does NOT generate a persepctive matrix. Note that LookAt (and all projection
 // helpers in this library) are based on Vulkan's clip space, which differs from OpenGL.
 //
 // LookAt only orients the view from an arbitrary orientation down the positive Z axis. The up vector does not need to be orthagonal to
@@ -101,10 +80,6 @@ func Camera(eye Pt, look Vec, up Vec) Mat {
 
 	m := Mat{u, v, w, {0, 0, 0, 1}} //.Transpose() //.Translate()
 	r := t.MultM(m)
-	// m = Identity()
 
-	// m[1][1], m[2][2] = -1, -1
-	// m[3][3] = -1
-	// return x.MultM(m)
 	return r.Inverse()
 }
