@@ -29,10 +29,7 @@ floats on the GPU. As a consequence, and rather than constantly forcing float32 
 You can generate a simple tranformation with the `NewMat__` variants:
 
 ```go
-import (
-    "github.com/bbredesen/vkm"
-    "github.com/chewxy/math32"
-)
+import "github.com/bbredesen/vkm"
 // ...
 transVec := vkm.NewVec(-1, -2, -3)
 transMat := vkm.NewMatTranslate(transVec)
@@ -43,6 +40,8 @@ Rotations are measured in radians by default, but each rotation function has a
 normalize the vector first:
 
 ```go
+import "github.com/chewxy/math32"
+// ...
 axisVec := vkm.NewVec(1, 1, 1).Normalize()
 aRotationMat := vkm.NewMatRotate(axisVec, math32.Pi)
 ```
